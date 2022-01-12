@@ -1,0 +1,126 @@
+[
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 0,
+    "fields": {
+      "name": "Стулья",
+      "description": "Удобные стулья"
+    }
+  },
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 1,
+    "fields": {
+      "name": "Освещение",
+      "description": "Освещение для дома и офиса"
+    }
+  },
+  {
+    "model": "mainapp.ProductCategory",
+    "pk": 2,
+    "fields": {
+      "name": "Столы",
+      "description": "Удобные столы"
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 0,
+      "name": "Стул 1",
+      "short_desc": "Стул мягкий",
+      "price": 2500,
+      "quantitly": 23
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 0,
+      "name": "Стул 2",
+      "price": 2700,
+      "quantitly": 10
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 0,
+      "name": "Стул 3",
+      "price": 3000,
+      "quantitly": 7
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 0,
+      "name": "Стул 4",
+      "price": 1500,
+      "quantitly": 50
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 1,
+      "name": "Лампа 1",
+      "price": 1000,
+      "quantitly": 7
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 1,
+      "name": "Лампа 2",
+      "price": 1000,
+      "quantitly": 13
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 1,
+      "name": "Лампа 3",
+      "price": 1500,
+      "quantitly": 13
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 1,
+      "name": "Лампа 4",
+      "price": 4000,
+      "quantitly": 50
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 1,
+      "name": "Лампа 5",
+      "price": 8000,
+      "quantitly": 45
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 1,
+      "name": "Лампа 6",
+      "price": 7400,
+      "quantitly": 14
+    }
+  },
+  {
+    "model": "mainapp.Product",
+    "fields": {
+      "category": 2,
+      "name": "Стол 1",
+      "price": 1000,
+      "quantitly": 13
+    }
+  }
+]
