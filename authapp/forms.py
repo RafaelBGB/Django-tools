@@ -1,8 +1,9 @@
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
-from django.forms import forms
-from django.forms.widgets import HiddenInput
+from django.contrib.auth import get_user_model
+from django.forms import forms, ModelForm, HiddenInput
 
-from authapp.models import ShopUser
+
+from authapp.models import ShopUserProfile, ShopUser
 
 
 class ShopUserLoginForm(AuthenticationForm):
@@ -33,7 +34,7 @@ class ShopUserRegisterForm(UserCreationForm):
 
 class ShopUserEditForm(UserChangeForm):
     class Meta:
-        model = ShopUser
+        model = get_user_model()
         fields = ('username', 'first_name', 'email', 'age', 'avatar', 'password')
 
     def __init__(self, *args, **kwargs):
@@ -52,3 +53,18 @@ class ShopUserEditForm(UserChangeForm):
             raise forms.ValidationError("Вы слишком стары!")
 
         return data
+
+
+class ShopUserProfileChangeForm(ModelForm):
+    class Meta:
+        model = ShopUserProfile
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name == 'user':
+                field.widget = HiddenInput()
+                continue
+            field.widget.attrs['class'] = f'form-control {field_name}'
+

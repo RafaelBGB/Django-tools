@@ -13,7 +13,7 @@ from geekshop.settings import DOMAIN_NAME, EMAIL_HOST_USER, ACTIVATION_KEY_TTL
 
 class ShopUser(AbstractUser):
     avatar = models.ImageField(upload_to='user_avatars', blank=True)
-    age = models.PositiveIntegerField(verbose_name='возраст')
+    age = models.PositiveIntegerField(verbose_name='возраст', default=18)
     activation_key = models.CharField(max_length=128, blank=True)
     email = models.EmailField('email address', unique=True)
 
@@ -33,3 +33,18 @@ class ShopUser(AbstractUser):
         subject = f'Подтверждение учетоной записи {self.username}'
         massage = f'Для завершения регистрации пройдите по ссылке: \n{DOMAIN_NAME}{verify_link}'
         return send_mail(subject, massage, EMAIL_HOST_USER, [self.email])
+
+
+class ShopUserProfile(models.Model):
+    MALE = 'M'
+    FEMALE = 'W'
+
+    GENDER_CHOICES = (
+        (MALE, 'мужской'),
+        (FEMALE, 'женский'),
+    )
+
+    user = models.OneToOneField(ShopUser, primary_key=True, on_delete=models.CASCADE)
+    tagline = models.CharField(verbose_name='теги', max_length=128, blank=True)
+    about_me = models.TextField(verbose_name='о себе', blank=True)
+    gender = models.CharField(verbose_name='пол', max_length=1, choices=GENDER_CHOICES, blank=True)
