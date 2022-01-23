@@ -6,7 +6,6 @@ from geekshop.settings import MEDIA_ROOT
 
 
 def save_user_profile(backend, user, response, *args, **kwargs):
-    print(response)
     if backend.name == 'vk-oauth2':
         if 'email' in response.keys():
             if response['email'].split('.')[-1] != 'ru':

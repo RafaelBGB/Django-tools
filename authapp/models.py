@@ -34,6 +34,12 @@ class ShopUser(AbstractUser):
         massage = f'Для завершения регистрации пройдите по ссылке: \n{DOMAIN_NAME}{verify_link}'
         return send_mail(subject, massage, EMAIL_HOST_USER, [self.email])
 
+    def basket_price(self):
+        return sum(el.product_cost for el in self.basket.all())
+
+    def basket_qty(self):
+        return sum(el.quantity for el in self.basket.all())
+
 
 class ShopUserProfile(models.Model):
     MALE = 'M'

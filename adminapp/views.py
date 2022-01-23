@@ -1,36 +1,16 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import user_passes_test
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.utils.decorators import method_decorator
+from django.http import HttpResponseRedirect
 
 from authapp.models import ShopUser
 from mainapp.models import Product, ProductCategory
 from authapp.forms import ShopUserRegisterForm
-from adminapp.forms import AdminShopUserUpdateForm, ProductEditForm, ProductCategoryEditForm
-
-
-class SuperUserOnlyMixin:
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-
-class PageTitleMixin:
-    page_title_key = 'page_title'
-    page_title = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context[self.page_title_key] = self.page_title
-        return context
-
-
-class GetSuccessUrlMixin:
-    def get_success_url(self):
-        return reverse('admin:products_category', args=[self.object.category_id])
+from adminapp.forms import AdminShopUserUpdateForm, ProductEditForm, ProductCategoryEditForm, AdminOrdersEditForm
+from ordersapp.models import Order, OrderItem
+from mixins.mixins import SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin
 
 
 class AdminUserListView(SuperUserOnlyMixin, PageTitleMixin, ListView):
@@ -126,6 +106,34 @@ class ProductDeleteView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin, 
     page_title = 'админка/продукты/удаление'
 
 
+class AdminOrderList(PageTitleMixin, ListView):
+    model = Order
+    page_title = 'админка/заказы'
+    template_name = 'ordersapp/orders_list.html'
 
 
+class AdminOrderUpdate(UpdateView):
+    model = Order
+    form_class = AdminOrdersEditForm
+    success_url = reverse_lazy('admin:orders')
+    template_name = 'ordersapp/orders_form.html'
+    page_title = 'админка/заказы/редактирование'
 
+
+class AdminOrderDelete(PageTitleMixin, DeleteView):
+    model = Order
+    success_url = reverse_lazy('admin:orders')
+    template_name = 'ordersapp/orders_confirm_delete.html'
+    page_title = 'админка/заказы/удаление'
+
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
+        self.object.is_active = False
+        self.object.save()
+        return HttpResponseRedirect(self.success_url)
+
+
+class AdminOrderRead(DetailView):
+    model = Order
+    template_name = 'ordersapp/orders_detail.html'
+    page_title = 'админка/заказы/просмотр'

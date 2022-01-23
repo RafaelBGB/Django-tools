@@ -20,4 +20,9 @@ urlpatterns = [
     path('products/read/<int:pk>/', adminapp.ProductDetailView.as_view(), name='product_read'),
     path('products/update/<int:pk>/', adminapp.ProductUpdateView.as_view(), name='product_update'),
     path('products/delete/<int:pk>/', adminapp.ProductDeleteView.as_view(), name='product_delete'),
+
+    path('orders/', adminapp.AdminOrderList.as_view(), name='orders'),
+    path('orders/update/<int:pk>/', adminapp.AdminOrderUpdate.as_view(), name='orders_update'),
+    path('orders/delete/<int:pk>/', adminapp.AdminOrderDelete.as_view(), name='orders_delete'),
+    path('orders/read/<int:pk>/', adminapp.AdminOrderRead.as_view(), name='orders_read'),
 ]

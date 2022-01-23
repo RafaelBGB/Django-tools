@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('mainapp.urls', namespace='main')),
     path('auth/', include('authapp.urls', namespace='auth')),
     path('basket/', include('basketapp.urls', namespace='basket')),
+    path('orders/', include('ordersapp.urls', namespace='orders')),
     path('social/', include('social_django.urls', namespace='social')),
 ]
 

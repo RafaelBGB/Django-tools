@@ -1,0 +1,31 @@
+{% extends 'adminapp/base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+    {% include 'ordersapp/includes/inc_admin_order_summary.html' %}
+    <div class="order_form">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="basket_container">
+                <div class="basket_list">
+                    {% for item in object.order.select_related %}
+                        <div class="basket_record">
+                            <img src="{{ item.product.image|media_folder_products }}" alt="{{ item.product.short_desc }}">
+                            <span class="category_name">{{ item.product.category.name }}</span>
+                            <span class="product_name">{{ item.product.name }}</span>
+                            <span class="product_price">{{ item.product.price }}&nbspруб</span>
+                            <span class="product_quantity"> x {{ item.quantity }} шт</span>
+                            <span class="product_cost"> = {{ item.get_product_cost }}&nbspруб</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <input type="submit" value="сохранить" class="btn btn-default btn-round form-control last">
+        </form>
+    </div>
+    {% include 'ordersapp/includes/inc_admin_order_actions.html' %}
+{% endblock %}
