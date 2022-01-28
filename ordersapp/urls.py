@@ -11,4 +11,5 @@ urlpatterns = [
     path('delete/<int:pk>/', ordersapp.OrderDelete.as_view(), name='delete'),
     path('read/<int:pk>/', ordersapp.OrderRead.as_view(), name='read'),
     path('complate/<int:pk>/', ordersapp.forming_complete, name='complete'),
+    path('update/ajax/<int:pk>/', ordersapp.ajax_update, name='ajax_update'),
 ]

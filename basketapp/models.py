@@ -1,5 +1,4 @@
 from django.db import models
-from django.http import request
 
 from mainapp.models import Product
 from django.contrib.auth import get_user_model

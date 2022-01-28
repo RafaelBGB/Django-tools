@@ -1,7 +1,13 @@
 {% if object.pk %}
     <div class="h2">Заказ №{{ object.pk }} от {{ object.created_data|date:"Y-m-d" }}</div>
     <hr>
-    <div class="h4">заказчик: {{ user.last_name }} {{ user.first_name }}</div>
+    <div class="h4">заказчик:
+        {% if user.last_name or user.first_name %}
+            {{ user.last_name }} {{ user.first_name }}
+        {% else %}
+            Пользователь
+        {% endif %}
+    </div>
     <div class="h4">статус: {{ object.get_status_display }}</div>
     <hr>
     <div class="h4">

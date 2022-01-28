@@ -20,6 +20,9 @@ class OrderForm(BaseOrderForm):
 
 
 class OrderItemForm(BaseOrderForm):
+    price = forms.FloatField(required=False, label='цена за единицу')
+    total_price = forms.FloatField(required=False, label='цена')
+
     class Meta:
         model = OrderItem
         fields = '__all__'

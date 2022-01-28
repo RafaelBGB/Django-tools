@@ -24,8 +24,10 @@
         <div class="h2 text-center head">
             {{ user.first_name|default:"Пользователь"|capfirst }}
         </div>
+
+        {% block content %}
+
+        {% endblock %}
     </div>
-    {% block content %}
-    {% endblock %}
 </body>
 </html>
