@@ -2,10 +2,21 @@
 {% load static %}
 
 {% block container %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message|safe }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {% include 'ordersapp/includes/inc_order_summary.html' %}
     <div class="order_form">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            {{ form.errors}}
             {{ form.as_p }}
             <table class="table">
                 {{ orderitems.management_form }}
@@ -14,7 +25,7 @@
                         <thead>
                         <tr>
                             {% for field in item_form.visible_fields %}
-                                <th class="{% cycle 'td1' 'td2' 'td3' 'td4' 'td5' %} order formset_td">
+                                <th class="{% cycle 'td1' 'td2' 'td3' 'td4' 'td5' 'td6' %} order formset_td">
                                     {{ field.label|capfirst }}
                                 </th>
                             {% endfor %}
@@ -24,7 +35,7 @@
 
                     <tr class="formset_row">
                         {% for field in item_form.visible_fields %}
-                            <td class="{% cycle 'td1' 'td2' 'td3' 'td4' 'td5' %} order formset_td">
+                            <td class="{% cycle 'td1' 'td2' 'td3' 'td4' 'td5' 'td6' %} order formset_td">
                                 {% if forloop.first %}
                                     {% for hidden in item_form.hidden_fields %}
                                         {{ hidden }}
@@ -38,6 +49,10 @@
                                 {% elif field.name == 'price' %}
                                     <span class="items-{{ forloop.parentloop.counter0 }}-price">
                                         {{ field.value|default:"0,00" }}руб
+                                    </span>
+                                {% elif field.name == 'total_quantity' %}
+                                    <span class="items-{{ forloop.parentloop.counter0 }}-total_quantity">
+                                        {{ field.value|default:"0" }}
                                     </span>
                                 {% else %}
                                     {{ field }}

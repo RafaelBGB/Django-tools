@@ -4,8 +4,8 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView, D
 from django.db import transaction
 from django.shortcuts import get_object_or_404, reverse
 from django.http import HttpResponseRedirect
-from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.contrib import messages
 
 from ordersapp.models import Order, OrderItem
 from ordersapp.forms import OrderForm, OrderItemForm
@@ -83,26 +83,26 @@ class OrderUpdate(UpdateView):
         else:
             formset = OrderFromSet(instance=self.object)
             for form in formset.forms:
+
                 instance = form.instance
                 if instance.pk:
                     form.initial['price'] = instance.product.price
                     form.initial['total_price'] = instance.product.price * instance.quantity
+                    form.initial['total_quantity'] = instance.product.quantity
         context['orderitems'] = formset
         return context
 
+    @transaction.atomic()
     def form_valid(self, form):
         context = self.get_context_data()
         orderitems = context['orderitems']
 
-        with transaction.atomic():
-            order = super().form_valid(form)
-            if orderitems.is_valid():
-                orderitems.save()
+        if orderitems.is_valid():
+            orderitems.save()
+        if self.object.total_cost == 0:
+            self.object.delete()
 
-            if self.object.total_cost == 0:
-                self.object.delete()
-
-            return order
+        return super().form_valid(form)
 
 
 class OrderDelete(DeleteView, PageTitleMixin):
@@ -123,7 +123,8 @@ def forming_complete(request, pk):
     return HttpResponseRedirect(reverse('orders:index'))
 
 
-def ajax_update(request, pk):
+def ajax_update(request, pk=None):
     if request.is_ajax:
-        product_cost = Product.objects.get(pk=int(pk)).price
-        return JsonResponse({'result': product_cost})
+        product = Product.objects.get(pk=int(pk))
+        return JsonResponse({'price': product and product.price or 0,
+                             'quantity': product and product.quantity or 0})

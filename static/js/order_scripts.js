@@ -40,7 +40,7 @@ function updateTotalQuantity(){
 }
 
 
-function orderSummaryUpdate(price, delta, ){
+function orderSummaryUpdate(price, delta){
     orderTotalQuantity +=delta;
     deltaCost = price * deltaQuantity;
     orderTotalCost += deltaCost;
@@ -79,6 +79,7 @@ window.onload = function () {
 
     $orderForm = $('.order_form')
     $orderForm.on('change', 'input[type="number"]', function (event){
+
         orderItemNum = parseInt(event.target.name.replace('order-', '').replace('-quantity', ''));
         if (priceArr[orderItemNum]) {
             orderItemQuantity = parseInt(event.target.value);
@@ -101,18 +102,53 @@ window.onload = function () {
 
     $('.order_form select').change(function (event){
         let t_href = event.target;
-        $.ajax({
-            url: "/orders/update/ajax/" + t_href.value + "/",
-            success: function (data) {
-                let num = parseInt(t_href.name.replace('order-', '').replace('-product', ''));
-                let item = $('.items-' + num + '-price')
+        let num = parseInt(t_href.name.replace('order-', '').replace('-product', ''));
+        let item_price = $('.items-' + num + '-price');
+        let item_total_quantity = $('.items-' + num + '-total_quantity');
+        $('input[name="order-' + num + '-quantity"]').val(0);
 
-                item.html(Number(data['result']).toString().replace('.', ','));
-                quantityArr[num] = parseInt($('input[name="order-' + num + '-quantity"]').val());
-                priceArr[num] = parseFloat(item.text().replace(',', '.'));
-                console.log(priceArr)
-            }
-        });
+
+        deltaQuantity = -quantityArr[num];
+
+        if (t_href.value) {
+            $.ajax({
+                url: "/orders/update/ajax/" + t_href.value + "/",
+                success: function (data) {
+                    item_price.html(Number(data.price).toString().replace('.', ','));
+                    item_total_quantity.html(Number(data.quantity));
+
+                    quantityArr[num] = parseInt($('input[name="order-' + num + '-quantity"]').val());
+                    priceArr[num] = parseFloat(item_price.text().replace(',', '.'));
+
+                    renderTotalCostItem(num);
+                    orderSummaryUpdate(priceArr[num], deltaQuantity);
+
+                    // priceArr[num] = parseFloat(data);
+                    // if (isNaN(quantityArr[num])) {
+                    //     quantityArr[num] = 0;
+                    // }
+                    // let priceHtml = '<span>' +
+                    //     data.toString().replace('.', ',') +
+                    //     '</span> руб';
+                    // let currentTR = $('.order_form table').find('tr:eq(' + (num + 1) + ')');
+                    // currentTR.find('td:eq(2)').html(priceHtml);
+                    // let $productQuantity = currentTR.find('input[type="number"]');
+                    // if (!$productQuantity.val() || isNaN($productQuantity.val())) {
+                    //     $productQuantity.val(0);
+                    // }
+                    // orderSummaryUpdate(quantityArr[num], parseInt($productQuantity.val()));
+                }
+            })
+        } else {
+            item_price.html(Number('0').toString().replace('.', ','));
+            item_total_quantity.html(Number('0'));
+
+            quantityArr[num] = 0;
+            priceArr[num] = 0;
+
+            renderTotalCostItem(num);
+            orderSummaryUpdate(priceArr[num], deltaQuantity);
+        }
 
     });
 

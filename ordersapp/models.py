@@ -69,7 +69,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, verbose_name='продукт', on_delete=models.CASCADE, related_name='product')
     quantity = models.PositiveIntegerField(verbose_name='количество', default=0)
 
-    items = OrderItemQuerySet.as_manager()
+    objects = OrderItemQuerySet.as_manager()
 
     @property
     def product_cost(self):
