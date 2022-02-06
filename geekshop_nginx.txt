@@ -12,7 +12,7 @@ server {
     }
 
     location / {
-        include proxy_params;
+        include proxy_prams;
         proxy_pass http://unix:/home/geek/www/geekshop/geekshop.sock;
     }
 }

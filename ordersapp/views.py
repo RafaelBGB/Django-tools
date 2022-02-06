@@ -5,15 +5,14 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, reverse
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
-from django.contrib import messages
 
 from ordersapp.models import Order, OrderItem
 from ordersapp.forms import OrderForm, OrderItemForm
 from mainapp.models import Product
-from mixins.mixins import PageTitleMixin
+from mixins.mixins import PageTitleMixin, UserOnlyMixin
 
 
-class OrderList(ListView, PageTitleMixin):
+class OrderList(UserOnlyMixin, ListView, PageTitleMixin):
     model = Order
     page_title = 'заказы'
 
@@ -21,7 +20,7 @@ class OrderList(ListView, PageTitleMixin):
         return self.request.user.users_order.all()
 
 
-class OrderCreate(CreateView):
+class OrderCreate(UserOnlyMixin, CreateView):
     model = Order
     form_class = OrderForm
     success_url = reverse_lazy('orders:index')
@@ -68,7 +67,7 @@ class OrderCreate(CreateView):
         return order
 
 
-class OrderUpdate(UpdateView):
+class OrderUpdate(UserOnlyMixin, UpdateView):
     model = Order
     form_class = OrderForm
     success_url = reverse_lazy('orders:index')
@@ -105,13 +104,13 @@ class OrderUpdate(UpdateView):
         return super().form_valid(form)
 
 
-class OrderDelete(DeleteView, PageTitleMixin):
+class OrderDelete(UserOnlyMixin, DeleteView, PageTitleMixin):
     model = Order
     success_url = reverse_lazy('orders:index')
     page_title = 'заказы/удаление'
 
 
-class OrderRead(DetailView, PageTitleMixin):
+class OrderRead(UserOnlyMixin, DetailView, PageTitleMixin):
     model = Order
     page_title = 'заказы/просмотр'
 

@@ -9,7 +9,7 @@
     </form>
     <button class="btn btn-round form-control last">
         <a href="{% url 'admin:users' %}">
-          к списку пользователей
+          к списку пользователей {{ object.pk }}
         </a>
     </button>
 {% endblock %}

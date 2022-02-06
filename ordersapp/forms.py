@@ -18,9 +18,6 @@ class BaseOrderForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
-
-
-
 class OrderForm(BaseOrderForm):
     class Meta:
         model = Order

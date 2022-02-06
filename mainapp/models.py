@@ -40,7 +40,7 @@ class Product(models.Model):
 
     @staticmethod
     def get_items():
-        return Product.objects.filter(is_active=True).order_by('category', 'name')
+        return Product.objects.filter(is_active=True, category__is_active=True).order_by('category', 'name')
 
     def delete(self, using=None, keep_parents=False):
         self.is_active = False

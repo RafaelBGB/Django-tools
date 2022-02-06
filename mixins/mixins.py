@@ -9,6 +9,12 @@ class SuperUserOnlyMixin:
         return super().dispatch(*args, **kwargs)
 
 
+class UserOnlyMixin:
+    @method_decorator(user_passes_test(lambda u: u.is_authenticated))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
 class PageTitleMixin:
     page_title_key = 'page_title'
     page_title = None
