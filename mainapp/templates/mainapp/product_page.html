@@ -1,0 +1,33 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block menu %}
+<div class="hero-white">
+	{{ block.super }}
+</div>
+{% endblock %}
+
+{% block content %}
+    <div class="details">
+        <div class="details-products">
+            <div class="details-slider">
+                <div class="slider-product">
+                    <img src="/media/{{ product.image }}" alt="{{ product.short_desc }}">
+                </div>
+            </div>
+
+            <div class="description">
+                <h3 class="big-bold">{{ product.name|capfirst }}</h3>
+                <br>
+                <p class="price">{{ product.price }} <span>руб</span></p>
+                <a href="{% url 'basket:add' product.pk %}" class="red-button">
+                    в корзину <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                <div class="description-text">
+                    <p>{{ product.short_desc }}</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
