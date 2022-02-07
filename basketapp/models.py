@@ -13,7 +13,7 @@ class Basket(models.Model):
 
     @cached_property
     def get_basket(self):
-        item = self.select_related()
+        item = Basket.objects.select_related()
         print(item)
         result = {
             'total_quantity': sum(list(map(lambda x: x.quantity, item))),

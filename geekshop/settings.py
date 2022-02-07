@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -58,20 +58,19 @@ MIDDLEWARE = [
 ]
 
 if DEBUG:
-    import mimetypes
-    mimetypes.add_type("application/javascript", ".js", True)
-
     INSTALLED_APPS.extend(
-        [
-            'debug_toolbar',
-            'template_profiler_panel',
-            'django_extensions',
-        ]
+        ['debug_toolbar',
+         'template_profiler_panel',
+         'django_extensions', ]
+    )
+    MIDDLEWARE.append(
+        'debug_toolbar.middleware.DebugToolbarMiddleware'
     )
 
-    MIDDLEWARE.append(
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
+
+    def show_toolbar(request):
+        return True
+
 
     DEBUG_TOOLBAR_CONFIG = {
         'SHOW_TOOLBAR_CALLBACK': lambda x: True,
@@ -92,10 +91,6 @@ if DEBUG:
         'debug_toolbar.panels.redirects.RedirectsPanel',
         'debug_toolbar.panels.profiling.ProfilingPanel',
         'template_profiler_panel.panels.template.TemplateProfilerPanel',
-    ]
-
-    INTERNAL_IPS = [
-        "127.0.0.1",
     ]
 
 
@@ -142,7 +137,7 @@ postgres = {
     }
 }
 
-DATABASES = sqlite
+DATABASES = sqlite if DEBUG else postgres
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -243,4 +238,18 @@ SOCIAL_AUTH_PIPELINE = (
     'authapp.pipeline.save_user_profile',
 )
 
+LOW_CACHE = False
 
+if os.name == 'posix':
+    CACHE_MIDDLEWARE_ALIAS = 'default'
+    CACHE_MIDDLEWARE_SECONDS = 120
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'geekshop'
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211',
+        }
+    }
+
+    LOW_CACHE = True

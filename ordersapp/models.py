@@ -37,7 +37,6 @@ class Order(models.Model):
     def is_forming(self):
         return self.status == self.FORMING
 
-    @cached_property
     def get_summary(self):
         items = self.order.select_related()
         summary = {

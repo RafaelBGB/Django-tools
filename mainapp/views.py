@@ -1,16 +1,47 @@
 from random import sample
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.cache import cache
 
-from .models import ProductCategory, Product
+from geekshop.settings import LOW_CACHE
+from mainapp.models import ProductCategory, Product
 
 
-def get_categories():
-    return ProductCategory.objects.all()
+def get_links_menu():
+    if LOW_CACHE:
+        key = 'links_menu'
+        links_menu = cache.get(key)
+        if links_menu is None:
+            links_menu = ProductCategory.objects.filter(is_active=True)
+            cache.set(key, links_menu)
+        return links_menu
+    return ProductCategory.objects.filter(is_active=True)
+
+
+def get_category(pk):
+    if LOW_CACHE:
+        key = f'category_{pk}'
+        category = cache.get(key)
+        if category is None:
+            category = get_object_or_404(ProductCategory, pk=pk)
+            cache.set(key, category)
+        return category
+    return get_object_or_404(ProductCategory, pk=pk)
+
+
+def get_products():
+    if LOW_CACHE:
+        key = 'products'
+        product = cache.get(key)
+        if product is None:
+            product = Product.objects.filter(is_active=True, category__is_active=True).select_related('category')
+            cache.set(key, product)
+        return product
+    return Product.objects.filter(is_active=True, category__is_active=True).select_related('category')
 
 
 def get_hot_product():
-    product = Product.objects.all()
+    product = get_products()
     return sample(list(product), 1)[0]
 
 
@@ -29,18 +60,17 @@ def main(request):
 
 
 def products(request, pk=None, page=1):
-    link_menu = ProductCategory.objects.filter(is_active=True)
-
     if pk is not None:
         if pk == 0:
             category = {
                 'pk': 0,
                 'name': 'все',
             }
-            products_list = Product.objects.filter(is_active=True, category__is_active=True).order_by('price')
+            products_list = get_products()
         else:
-            category = get_object_or_404(ProductCategory, pk=pk)
-            products_list = Product.objects.filter(category__pk=pk, is_active=True, category__is_active=True).order_by('price')
+            category = get_category(pk)
+            products_list = Product.objects.filter(category__pk=pk, is_active=True, category__is_active=True).\
+                order_by('price')
 
         paginator = Paginator(products_list, 2)
         try:
@@ -52,7 +82,7 @@ def products(request, pk=None, page=1):
 
         context = {
                 'page_title': 'товары категории',
-                'links_menu': link_menu,
+                'links_menu': get_links_menu(),
                 'category': category,
                 'products_list': product_paginator,
             }
@@ -61,7 +91,7 @@ def products(request, pk=None, page=1):
     hot_product = get_hot_product()
     context = {
         'page_title': 'продукты',
-        'links_menu': get_categories(),
+        'links_menu': get_links_menu(),
         'hot_product': hot_product,
         'same_products': get_same_products(hot_product),
     }
@@ -77,7 +107,6 @@ def product_page(request, pk):
     product = get_object_or_404(Product, pk=pk)
     context = {
         'page_title': 'старница продукта',
-        'links_menu': get_categories(),
         'product': product,
         'categories': get_categories(),
     }
