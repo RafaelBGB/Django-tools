@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.dispatch import receiver
-from django.db.models.signals import pre_save, pre_delete
+from django.utils.functional import cached_property
 
 from mainapp.models import Product
 
@@ -24,35 +23,30 @@ class Order(models.Model):
     )
 
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='users_order')
-    created_data = models.DateTimeField(verbose_name='время добавления', auto_now_add=True)
+    created_data = models.DateTimeField(verbose_name='время добавления', db_index=True, auto_now_add=True)
     update_data = models.DateTimeField(verbose_name='время обновления', auto_now=True)
     status = models.CharField(verbose_name='статус', max_length=3, choices=STATUS_CHOICES, default=FORMING)
-    is_active = models.BooleanField(verbose_name='активен', default=True)
+    is_active = models.BooleanField(verbose_name='активен', db_index=True, default=True)
 
     class Meta:
         ordering = ('-created_data',)
         verbose_name = 'заказ'
         verbose_name_plural = 'заказы'
 
-    @property
+    @cached_property
     def is_forming(self):
         return self.status == self.FORMING
 
-    @property
-    def total_quantity(self):
-        return sum(map(lambda x: x.quantity, self.order.all()))
-
-    @property
-    def total_cost(self):
-        return sum(map(lambda x: x.product_cost, self.order.all()))
+    @cached_property
+    def get_summary(self):
+        items = self.order.select_related()
+        summary = {
+            'total_quantity': sum(map(lambda x: x.quantity, items)),
+            'total_cost': sum(map(lambda x: x.product_cost, items))
+        }
+        return summary
 
     def delete(self, using=None, keep_parents=False):
-        # for item in self.order.all():
-        #     item.product.quantity += item.quantity
-        #     item.product.save()
-
-        # вызываем delete для продуктов заказа. Хотя на мой взгляд это лучше сделать циклом for,
-        # прям в данном методе (закоментировано выше)
         self.order.delete()
         self.status = Order.CANCEL
         self.save()
@@ -71,7 +65,7 @@ class OrderItem(models.Model):
 
     objects = OrderItemQuerySet.as_manager()
 
-    @property
+    @cached_property
     def product_cost(self):
         return self.product.price * self.quantity
 
@@ -88,21 +82,3 @@ class OrderItem(models.Model):
 
         self.product.save()
         super().save()
-
-
-# @receiver(pre_save, sender=OrderItem)
-# def product_quantity_update_save(sender, update_fields, instance, **kwargs):
-#     if instance.pk:
-#         old_quantity = sender.objects.get(pk=instance.pk).quantity
-#         instance.product.quantity += old_quantity - instance.quantity
-#     else:
-#         instance.product.quantity -= instance.quantity
-#
-#     instance.product.save()
-#
-#
-# @receiver(pre_delete, sender=OrderItem)
-# def product_quantity_update_delete(sender, instance, **kwargs):
-#     print('orderitem delete')
-#     instance.product.quantity += instance.quantity
-#     instance.product.save()

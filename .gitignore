@@ -4,3 +4,4 @@ mainapp/fixtures/db.json
 __pycache__/
 user_avatars
 tmp
+social_auth.json

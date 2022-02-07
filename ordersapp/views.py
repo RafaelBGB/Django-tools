@@ -80,9 +80,9 @@ class OrderUpdate(UserOnlyMixin, UpdateView):
         if self.request.POST:
             formset = OrderFromSet(self.request.POST, self.request.FILES, instance=self.object)
         else:
-            formset = OrderFromSet(instance=self.object)
+            queryset = self.object.order.select_related('product')
+            formset = OrderFromSet(instance=self.object, queryset=queryset)
             for form in formset.forms:
-
                 instance = form.instance
                 if instance.pk:
                     form.initial['price'] = instance.product.price

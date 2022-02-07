@@ -55,8 +55,10 @@
     <a href="{% url 'basket:index' %}" class="basket">
         <span>
             {% if basket %}
-                Количество:{{ basket.0.total_quantity }}
-                Цена:{{ basket.0.total_cost }}
+                {% with basket_object=basket.get_basket %}
+                    Количество:{{ basket_object.total_quantity }}
+                    Цена:{{ basket_object.total_cost }}
+                {% endwith %}
             {% endif %}
         </span>
     </a>
