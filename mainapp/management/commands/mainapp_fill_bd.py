@@ -27,4 +27,5 @@ class Command(BaseCommand):
             Product.objects.create(**product)
 
     if not ShopUser.objects.filter(username='django').exists():
-        ShopUser.objects.create_superuser('django', 'django@geekshop.local', 'geekbrains', age=33)
+        ShopUser.objects.create_superuser('django', 'django@geekshop.local',
+                                          'geekbrains', age=33)

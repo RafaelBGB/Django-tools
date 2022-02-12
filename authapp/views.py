@@ -6,7 +6,8 @@ from django.db.models.signals import post_save
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
 
-from authapp.forms import ShopUserLoginForm, ShopUserRegisterForm, ShopUserEditForm, ShopUserProfileChangeForm
+from authapp.forms import ShopUserLoginForm, ShopUserRegisterForm, \
+    ShopUserEditForm, ShopUserProfileChangeForm
 from authapp.models import ShopUser, ShopUserProfile
 
 
@@ -41,8 +42,10 @@ def logout(request):
 @atomic
 def edit(request):
     if request.method == 'POST':
-        form = ShopUserEditForm(request.POST, request.FILES, instance=request.user)
-        profile_form = ShopUserProfileChangeForm(request.POST, request.FILES, instance=request.user.shopuserprofile)
+        form = ShopUserEditForm(request.POST, request.FILES,
+                                instance=request.user)
+        profile_form = ShopUserProfileChangeForm(request.POST, request.FILES,
+                                                 instance=request.user.shopuserprofile)
 
         if form.is_valid() and profile_form.is_valid():
             form.save()
@@ -50,7 +53,8 @@ def edit(request):
             return HttpResponseRedirect(reverse('auth:edit'))
     else:
         form = ShopUserEditForm(instance=request.user)
-        profile_form = ShopUserProfileChangeForm(instance=request.user.shopuserprofile)
+        profile_form = ShopUserProfileChangeForm(instance=request.user.
+                                                 shopuserprofile)
 
     context = {
         'page_title': 'личный кабинет',
@@ -71,7 +75,8 @@ def register(request):
             user.save()
             user.send_confirm_email()
             messages.success(request, 'Вы успешно зарегистрированы. '
-                                      'Для заверщения регистрации пройдите по ссылке из email.')
+                                      'Для заверщения регистрации пройдите '
+                                      'по ссылке из email.')
     else:
         form = ShopUserRegisterForm()
 
@@ -84,10 +89,12 @@ def register(request):
 
 def verify(request, email, activation_key):
     user = get_user_model().objects.get(email=email)
-    if user.activation_key == activation_key and not user.is_activation_key_expired():
+    if user.activation_key == activation_key and not \
+            user.is_activation_key_expired():
         user.is_active = True
         user.save()
-        auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        auth.login(request, user,
+                   backend='django.contrib.auth.backends.ModelBackend')
     return render(request, 'authapp/verification.html')
 
 

@@ -9,7 +9,8 @@ from django.utils.decorators import method_decorator
 from authapp.models import ShopUser
 from mainapp.models import Product, ProductCategory
 from authapp.forms import ShopUserRegisterForm
-from adminapp.forms import AdminShopUserUpdateForm, ProductEditForm, ProductCategoryEditForm
+from adminapp.forms import AdminShopUserUpdateForm, ProductEditForm, \
+    ProductCategoryEditForm
 
 
 class SuperUserOnlyMixin:
@@ -30,7 +31,8 @@ class PageTitleMixin:
 
 class GetSuccessUrlMixin:
     def get_success_url(self):
-        return reverse('admin:products_category', args=[self.object.category_id])
+        return reverse('admin:products_category',
+                       args=[self.object.category_id])
 
 
 class AdminUserListView(SuperUserOnlyMixin, PageTitleMixin, ListView):
@@ -83,13 +85,15 @@ class CategoryDeleteView(SuperUserOnlyMixin, PageTitleMixin, DeleteView):
     page_title = 'админка/категории/удаление'
 
 
-class ProductCreateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin, CreateView):
+class ProductCreateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin,
+                        CreateView):
     model = Product
     form_class = ProductEditForm
     page_title = 'админка/продукты/создание'
 
     def get_initial(self):
-        return {'category': get_object_or_404(ProductCategory, pk=self.kwargs['pk'])}
+        return {'category': get_object_or_404(ProductCategory,
+                                              pk=self.kwargs['pk'])}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -103,11 +107,13 @@ class ProductsCategoryView(SuperUserOnlyMixin, PageTitleMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = get_object_or_404(ProductCategory, pk=self.kwargs['pk'])
+        context['category'] = get_object_or_404(ProductCategory,
+                                                pk=self.kwargs['pk'])
         return context
 
     def get_queryset(self):
-        return Product.objects.filter(category__pk=self.kwargs['pk']).order_by('name')
+        return Product.objects.filter(category__pk=self.kwargs['pk']).\
+            order_by('name')
 
 
 class ProductDetailView(SuperUserOnlyMixin, PageTitleMixin, DetailView):
@@ -115,13 +121,15 @@ class ProductDetailView(SuperUserOnlyMixin, PageTitleMixin, DetailView):
     page_title = 'админка/продукт'
 
 
-class ProductUpdateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin, UpdateView):
+class ProductUpdateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin,
+                        UpdateView):
     model = Product
     form_class = ProductEditForm
     page_title = 'админка/продукты/редактирование'
 
 
-class ProductDeleteView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin, DeleteView):
+class ProductDeleteView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin,
+                        DeleteView):
     model = Product
     page_title = 'админка/продукты/удаление'
 
