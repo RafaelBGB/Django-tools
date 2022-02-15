@@ -2,11 +2,13 @@
 {% load static %}
 
 {% block content %}
-    <div class="basket_list">
-        {% include 'includes/inc_basket_list.html' %}
+    <div class="basket_container">
+        <div class="basket_list">
+            {% include 'includes/inc_basket_list.html' %}
 
-        <a href="{% url 'main:index' %}" class="btn btn-round">
-          На главную
-        </a>
+            <a href="{% url 'main:index' %}" class="btn btn-round">
+              На главную
+            </a>
+        </div>
     </div>
 {% endblock %}

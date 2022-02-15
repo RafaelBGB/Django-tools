@@ -12,7 +12,8 @@
         <div class="details-products">
             <div class="details-slider">
                 <div class="slider-product">
-                    <img src="/media/{{ product.image }}" alt="{{ product.short_desc }}">
+                    <img src="/media/{{ product.image }}"
+                         alt="{{ product.short_desc }}">
                 </div>
             </div>
 
@@ -21,7 +22,8 @@
                 <br>
                 <p class="price">{{ product.price }} <span>руб</span></p>
                 <a href="{% url 'basket:add' product.pk %}" class="red-button">
-                    в корзину <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    в корзину <i class="fa fa-chevron-right"
+                                 aria-hidden="true"></i>
                 </a>
                 <div class="description-text">
                     <p>{{ product.short_desc }}</p>

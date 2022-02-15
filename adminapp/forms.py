@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django import forms
 
-from authapp.forms import ShopUserEditForm, HiddenInput
+from authapp.forms import ShopUserEditForm
 from mainapp.models import ProductCategory, Product
 from ordersapp.models import Order
 

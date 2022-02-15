@@ -26,12 +26,18 @@ class ShopUser(AbstractUser):
 
     def set_activation_key(self):
         salt = hashlib.sha1(str(random.random()).encode('utf8')).hexdigest()[:6]
-        self.activation_key = hashlib.sha1((self.email + salt).encode('utf8')).hexdigest()
+        self.activation_key = hashlib.sha1((self.email + salt).
+                                           encode('utf8')).hexdigest()
 
     def send_confirm_email(self):
-        verify_link = reverse('auth:verify', kwargs={'email': self.email, 'activation_key': self.activation_key})
+        verify_link = reverse('auth:verify',
+                              kwargs={
+                                  'email': self.email,
+                                  'activation_key': self.activation_key
+                              })
         subject = f'Подтверждение учетоной записи {self.username}'
-        massage = f'Для завершения регистрации пройдите по ссылке: \n{DOMAIN_NAME}{verify_link}'
+        massage = f'Для завершения регистрации пройдите по ссылке: ' \
+                  f'\n{DOMAIN_NAME}{verify_link}'
         return send_mail(subject, massage, EMAIL_HOST_USER, [self.email])
 
     def basket_price(self):
@@ -50,7 +56,9 @@ class ShopUserProfile(models.Model):
         (FEMALE, 'женский'),
     )
 
-    user = models.OneToOneField(ShopUser, primary_key=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(ShopUser, primary_key=True,
+                                on_delete=models.CASCADE)
     tagline = models.CharField(verbose_name='теги', max_length=128, blank=True)
     about_me = models.TextField(verbose_name='о себе', blank=True)
-    gender = models.CharField(verbose_name='пол', max_length=1, choices=GENDER_CHOICES, blank=True)
+    gender = models.CharField(verbose_name='пол', max_length=1,
+                              choices=GENDER_CHOICES, blank=True)

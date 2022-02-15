@@ -19,8 +19,10 @@ def index(request):
 @login_required
 def add(request, product_pk):
     if 'login' in request.META.get('HTTP_REFERER'):
-        return HttpResponseRedirect(reverse('main:product_page', args=[product_pk]))
-    basket, _ = Basket.objects.get_or_create(user=request.user, product_id=product_pk)
+        return HttpResponseRedirect(reverse('main:product_page',
+                                            args=[product_pk]))
+    basket, _ = Basket.objects.get_or_create(user=request.user,
+                                             product_id=product_pk)
     basket.quantity += 1
     basket.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -49,5 +51,6 @@ def edit(request, pk, quantity):
         context = {
             'basket_items': basket_item,
         }
-        result = render_to_string('basketapp/includes/inc_basket_list.html', context)
+        result = render_to_string('basketapp/includes/inc_basket_list.html',
+                                  context)
         return JsonResponse({'result': result})
