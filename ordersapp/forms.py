@@ -28,7 +28,8 @@ class OrderForm(BaseOrderForm):
 
 
 class OrderItemForm(BaseOrderForm):
-    total_quantity = forms.IntegerField(required=False, label='количество на складе')
+    total_quantity = forms.IntegerField(required=False,
+                                        label='количество на складе')
     price = forms.FloatField(required=False, label='цена за единицу')
     total_price = forms.FloatField(required=False, label='цена')
 

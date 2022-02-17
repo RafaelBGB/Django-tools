@@ -37,7 +37,8 @@
 
 		{% for prod in products_list %}
 			<div class="block">
-				<a href="{% url 'main:product_page' prod.pk %}"><img src="/media/{{ prod.image }}" alt="img">
+				<a href="{% url 'main:product_page' prod.pk %}">
+					<img src="/media/{{ prod.image }}" alt="img">
 					<div class="text">
 						<img src="{% static 'img/icon-hover.png' %}" alt="img">
 						<h4>{{ prod.short_desc }}</h4>

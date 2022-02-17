@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 from django.forms import inlineformset_factory
-from django.views.generic import CreateView, ListView, DeleteView, UpdateView, DetailView
+from django.views.generic import CreateView, ListView, DeleteView, UpdateView, \
+    DetailView
 from django.db import transaction
 from django.shortcuts import get_object_or_404, reverse
 from django.http import HttpResponseRedirect
@@ -29,7 +30,8 @@ class OrderCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'заказы/создание'
-        OrderFromSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=3)
+        OrderFromSet = inlineformset_factory(Order, OrderItem,
+                                             form=OrderItemForm, extra=3)
 
         if self.request.POST:
             formset = OrderFromSet(self.request.POST, self.request.FILES)
@@ -37,7 +39,8 @@ class OrderCreate(CreateView):
             context['form'].initial['user'] = self.request.user
             basket_item = self.request.user.basket.all()
             if basket_item and basket_item.count():
-                OrderFromSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm,
+                OrderFromSet = inlineformset_factory(Order, OrderItem,
+                                                     form=OrderItemForm,
                                                      extra=basket_item.count() + 1)
 
                 formset = OrderFromSet()
@@ -76,10 +79,12 @@ class OrderUpdate(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'зазазы/редактирование'
-        OrderFromSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
+        OrderFromSet = inlineformset_factory(Order, OrderItem,
+                                             form=OrderItemForm, extra=1)
 
         if self.request.POST:
-            formset = OrderFromSet(self.request.POST, self.request.FILES, instance=self.object)
+            formset = OrderFromSet(self.request.POST, self.request.FILES,
+                                   instance=self.object)
         else:
             formset = OrderFromSet(instance=self.object)
             for form in formset.forms:

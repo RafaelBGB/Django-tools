@@ -6,7 +6,8 @@ from django.db.models.signals import post_save
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
 
-from authapp.forms import ShopUserLoginForm, ShopUserRegisterForm, ShopUserEditForm, ShopUserProfileChangeForm
+from authapp.forms import ShopUserLoginForm, ShopUserRegisterForm, \
+    ShopUserEditForm, ShopUserProfileChangeForm
 from authapp.models import ShopUser, ShopUserProfile
 
 
@@ -41,8 +42,10 @@ def logout(request):
 @atomic
 def edit(request):
     if request.method == 'POST':
-        form = ShopUserEditForm(request.POST, request.FILES, instance=request.user)
-        profile_form = ShopUserProfileChangeForm(request.POST, request.FILES, instance=request.user.shopuserprofile)
+        form = ShopUserEditForm(request.POST, request.FILES,
+                                instance=request.user)
+        profile_form = ShopUserProfileChangeForm(request.POST, request.FILES,
+                                                 instance=request.user.shopuserprofile)
 
         if form.is_valid() and profile_form.is_valid():
             form.save()
@@ -71,7 +74,8 @@ def register(request):
             user.save()
             user.send_confirm_email()
             messages.success(request, 'Вы успешно зарегистрированы. '
-                                      'Для заверщения регистрации пройдите по ссылке из email.')
+                                      'Для заверщения регистрации пройдите '
+                                      'по ссылке из email.')
     else:
         form = ShopUserRegisterForm()
 

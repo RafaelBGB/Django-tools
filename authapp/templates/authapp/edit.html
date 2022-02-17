@@ -8,7 +8,8 @@
                 Личный кабинет
             </div>
 
-            <form class="form-horizontal" action="{% url 'auth:edit' %}" method="post" enctype="multipart/form-data">
+            <form class="form-horizontal" action="{% url 'auth:edit' %}"
+                  method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 {{ profile_form.as_p }}
