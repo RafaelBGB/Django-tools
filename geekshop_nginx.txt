@@ -1,0 +1,18 @@
+server {
+    listen 80;
+    server_name 192.168.0.101;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/geek/www/geekshop;
+    }
+
+    location /media/ {
+        root /home/geek/www/geekshop;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/geek/www/geekshop/geekshop.sock;
+    }
+}

@@ -1,0 +1,14 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: 
+ =?utf-8?b?0J/QvtC00YLQstC10YDQttC00LXQvdC40LUg0YPRh9C10YLQvtC90L7QuSDQt9Cw?=
+ =?utf-8?b?0L/QuNGB0LggdXNlcjE=?=
+From: django@geekshop.local
+To: wrqr@mail.ru
+Date: Wed, 12 Jan 2022 09:18:55 -0000
+Message-ID: <164197913568.6972.5096752553454881913@DESKTOP-HIK667R>
+
+Для завершения регистрации пройдите по ссылке: 
+http://localhost:8000/auth/user/verify/wrqr@mail.ru/bb6fa5f6ce36f55ea08983732a0218a05e7959dc/
+-------------------------------------------------------------------------------
