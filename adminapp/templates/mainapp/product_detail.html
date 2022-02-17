@@ -4,7 +4,8 @@
 {% block content %}
     <div class="product_read">
         <div class="product_name">
-            Продукт <strong>{{ object.category.name|capfirst }} {{ object.name|capfirst }}</strong>
+            Продукт <strong>{{ object.category.name|capfirst }}
+            {{ object.name|capfirst }}</strong>
         </div>
         <img src="/media/{{ object.image }}" alt="{{object.name}} ">
         <div class="summary">

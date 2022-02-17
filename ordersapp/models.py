@@ -23,10 +23,14 @@ class Order(models.Model):
         (CANCEL, 'отменен'),
     )
 
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='users_order')
-    created_data = models.DateTimeField(verbose_name='время добавления', auto_now_add=True)
-    update_data = models.DateTimeField(verbose_name='время обновления', auto_now=True)
-    status = models.CharField(verbose_name='статус', max_length=3, choices=STATUS_CHOICES, default=FORMING)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
+                             related_name='users_order')
+    created_data = models.DateTimeField(verbose_name='время добавления',
+                                        auto_now_add=True)
+    update_data = models.DateTimeField(verbose_name='время обновления',
+                                       auto_now=True)
+    status = models.CharField(verbose_name='статус', max_length=3,
+                              choices=STATUS_CHOICES, default=FORMING)
     is_active = models.BooleanField(verbose_name='активен', default=True)
 
     class Meta:
@@ -65,8 +69,10 @@ class OrderItemQuerySet(models.QuerySet):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order')
-    product = models.ForeignKey(Product, verbose_name='продукт', on_delete=models.CASCADE, related_name='product')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,
+                              related_name='order')
+    product = models.ForeignKey(Product, verbose_name='продукт',
+                                on_delete=models.CASCADE, related_name='product')
     quantity = models.PositiveIntegerField(verbose_name='количество', default=0)
 
     items = OrderItemQuerySet.as_manager()
@@ -79,7 +85,8 @@ class OrderItem(models.Model):
         self.product.quantity += self.quantity
         self.product.save()
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
         if self.pk:
             old_value = Order.objects.get(pk=self.order.pk).order.get(pk=self.pk).quantity
             self.product.quantity += old_value - self.quantity
