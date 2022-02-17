@@ -1,0 +1,60 @@
+{% extends 'adminapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    {% if not object_list %}
+        <div class="h2 text-center head">
+            Заказов пока нет
+        </div>
+    {% else %}
+        <table class="table order_list">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Пользователь</th>
+                    <th>Создан</th>
+                    <th>Обновлен</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                    <tr bgcolor="{% if not item.is_active %}#dc143c{% endif %}">
+                        <td class="td1 order_list">{{ item.pk }}</td>
+                        <td>{{ item.user.first_name|default:'Пользователь' }}</td>
+                        <td>{{ item.created_data}}</td>
+                        <td>{{ item.update_data}}</td>
+                        <td>{% if item.is_active %}
+                                {{ item.get_status_display }}
+                            {% else %}
+                                удален
+                            {% endif %}</td>
+                        <td>
+                            <a href="{% url 'admin:orders_read' item.pk %}">
+                                посмотреть
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'admin:orders_update' item.pk %}">
+                                редактировать
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'admin:orders_delete' item.pk %}">
+                                удалить
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a href="{% url 'main:index' %}" class="btn btn-default btn-round">
+        на главную
+    </a>
+    <a href="{% url 'orders:create' %}" class="btn btn-default btn-round">
+        новый заказ
+    </a>
+
+{% endblock %}
