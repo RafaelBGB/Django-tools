@@ -108,6 +108,6 @@ def product_page(request, pk):
     context = {
         'page_title': 'старница продукта',
         'product': product,
-        'categories': get_categories(),
+        # 'categories': get_category(product.category.pk),
     }
     return render(request, 'mainapp/product_page.html', context)

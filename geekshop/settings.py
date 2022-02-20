@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '2i(7e(*!9tti!7ymj3_k*sw60(^^l*_n3@0w%bkq!x0z9zdwng'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -137,7 +137,8 @@ postgres = {
     }
 }
 
-DATABASES = sqlite if DEBUG else postgres
+DATABASES = sqlite
+# DATABASES = sqlite if DEBUG else postgres
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

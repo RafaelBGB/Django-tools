@@ -14,7 +14,7 @@ class ProductCategory(models.Model):
     def delete(self, using=None, keep_parents=False):
         self.is_active = False
         self.save(using=using)
-        self.category.delete()
+        # self.category.delete()
 
 
 class ProductQuerySet(models.QuerySet):
@@ -40,7 +40,8 @@ class Product(models.Model):
 
     @classmethod
     def get_items(cls):
-        return cls.objects.select_related('category').filter(is_active=True, category__is_active=True).\
+        return cls.objects.select_related('category').\
+            filter(is_active=True, category__is_active=True).\
             order_by('category', 'name')
 
     def delete(self, using=None, keep_parents=False):

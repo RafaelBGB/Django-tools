@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.functional import cached_property
+from django.db.models import F
 
 from mainapp.models import Product
 
@@ -37,6 +38,7 @@ class Order(models.Model):
     def is_forming(self):
         return self.status == self.FORMING
 
+    @cached_property
     def get_summary(self):
         items = self.order.select_related()
         summary = {

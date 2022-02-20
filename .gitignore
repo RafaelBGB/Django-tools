@@ -5,5 +5,7 @@ __pycache__/
 user_avatars
 tmp
 social_auth.json
+.coverage
+test_db.json
 
 hw.txt

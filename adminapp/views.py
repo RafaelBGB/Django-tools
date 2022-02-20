@@ -4,12 +4,16 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import HttpResponseRedirect
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.db.models import F
 
 from authapp.models import ShopUser
 from mainapp.models import Product, ProductCategory
 from authapp.forms import ShopUserRegisterForm
-from adminapp.forms import AdminShopUserUpdateForm, ProductEditForm, ProductCategoryEditForm, AdminOrdersEditForm
-from ordersapp.models import Order, OrderItem
+from adminapp.forms import AdminShopUserUpdateForm, ProductEditForm, \
+    ProductCategoryEditForm, AdminOrdersEditForm
+from ordersapp.models import Order
 from mixins.mixins import SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin
 
 
@@ -51,6 +55,15 @@ class CategoryUpdateView(SuperUserOnlyMixin, PageTitleMixin, UpdateView):
     success_url = reverse_lazy('admin:categories')
     page_title = 'админка/категории/редактирование'
 
+    def form_valid(self, form):
+        if 'discount' in form.cleaned_data:
+            discount = form.cleaned_data['discount']
+            if discount:
+                self.object.category.update(
+                    price=F('price') * (1 - discount / 100)
+                )
+        return super().form_valid(form)
+
 
 class CategoryView(SuperUserOnlyMixin, PageTitleMixin, ListView):
     model = ProductCategory
@@ -63,13 +76,15 @@ class CategoryDeleteView(SuperUserOnlyMixin, PageTitleMixin, DeleteView):
     page_title = 'админка/категории/удаление'
 
 
-class ProductCreateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin, CreateView):
+class ProductCreateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin,
+                        CreateView):
     model = Product
     form_class = ProductEditForm
     page_title = 'админка/продукты/создание'
 
     def get_initial(self):
-        return {'category': get_object_or_404(ProductCategory, pk=self.kwargs['pk'])}
+        return {'category': get_object_or_404(ProductCategory,
+                                              pk=self.kwargs['pk'])}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -83,11 +98,13 @@ class ProductsCategoryView(SuperUserOnlyMixin, PageTitleMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = get_object_or_404(ProductCategory, pk=self.kwargs['pk'])
+        context['category'] = get_object_or_404(ProductCategory,
+                                                pk=self.kwargs['pk'])
         return context
 
     def get_queryset(self):
-        return Product.objects.filter(category__pk=self.kwargs['pk']).order_by('name')
+        return Product.objects.filter(category__pk=self.kwargs['pk']).order_by(
+            'name')
 
 
 class ProductDetailView(SuperUserOnlyMixin, PageTitleMixin, DetailView):
@@ -95,13 +112,15 @@ class ProductDetailView(SuperUserOnlyMixin, PageTitleMixin, DetailView):
     page_title = 'админка/продукт'
 
 
-class ProductUpdateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin, UpdateView):
+class ProductUpdateView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin,
+                        UpdateView):
     model = Product
     form_class = ProductEditForm
     page_title = 'админка/продукты/редактирование'
 
 
-class ProductDeleteView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin, DeleteView):
+class ProductDeleteView(SuperUserOnlyMixin, PageTitleMixin, GetSuccessUrlMixin,
+                        DeleteView):
     model = Product
     page_title = 'админка/продукты/удаление'
 
@@ -137,3 +156,12 @@ class AdminOrderRead(DetailView):
     model = Order
     template_name = 'ordersapp/orders_detail.html'
     page_title = 'админка/заказы/просмотр'
+
+
+@receiver(pre_save, sender=ProductCategory)
+def product_is_active_update_productcategory_save(sender, instance, **kwargs):
+    if instance.pk:
+        if instance.is_active:
+            instance.category.update(is_active=True)
+        else:
+            instance.category.update(is_active=False)
